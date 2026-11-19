@@ -1,15 +1,15 @@
 /*
- * SPDX-FileCopyrightText: 2025 The LineageOS Project
+ * SPDX-FileCopyrightText: 2026 The ExpressiveOS Project
  * SPDX-License-Identifier: Apache-2.0
  */
 
 #pragma once
 
-#include <aidl/vendor/lineage/touch/BnGloveMode.h>
+#include <aidl/vendor/expressiveos/touch/BnGloveMode.h>
 
 namespace aidl {
 namespace vendor {
-namespace lineage {
+namespace expressiveos {
 namespace touch {
 
 class GloveMode : public BnGloveMode {
@@ -19,6 +19,6 @@ class GloveMode : public BnGloveMode {
 };
 
 }  // namespace touch
-}  // namespace lineage
+}  // namespace expressiveos
 }  // namespace vendor
 }  // namespace aidl

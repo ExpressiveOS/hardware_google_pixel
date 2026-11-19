@@ -1,0 +1,4 @@
+service vendor.eos_health /vendor/bin/hw/vendor.expressiveos.health-service.default
+    class hal
+    user system
+    group system

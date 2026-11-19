@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2025 The LineageOS Project
+ * SPDX-FileCopyrightText: 2026 The ExpressiveOS Project
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -18,7 +18,7 @@ constexpr const char* kTouchSensitivityProp = "persist.vendor.touch_sensitivity_
 
 namespace aidl {
 namespace vendor {
-namespace lineage {
+namespace expressiveos {
 namespace touch {
 
 ndk::ScopedAStatus GloveMode::getEnabled(bool* _aidl_return) {
@@ -35,6 +35,6 @@ ndk::ScopedAStatus GloveMode::setEnabled(bool enable) {
 }
 
 }  // namespace touch
-}  // namespace lineage
+}  // namespace expressiveos
 }  // namespace vendor
 }  // namespace aidl

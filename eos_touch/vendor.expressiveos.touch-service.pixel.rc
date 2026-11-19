@@ -1,0 +1,4 @@
+service vendor.eos_touch /vendor/bin/hw/vendor.expressiveos.touch-service.pixel
+    class hal
+    user system
+    group system

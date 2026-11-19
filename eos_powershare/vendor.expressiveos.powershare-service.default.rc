@@ -1,0 +1,4 @@
+service vendor.eos_powershare /vendor/bin/hw/vendor.expressiveos.powershare-service.default
+    class hal
+    user system
+    group system
