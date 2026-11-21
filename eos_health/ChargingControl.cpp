@@ -232,19 +232,54 @@ ndk::ScopedAStatus ChargingControl::getChargingLimit(ChargingLimitInfo* _aidl_re
 }
 
 ndk::ScopedAStatus ChargingControl::setChargingLimit(const ChargingLimitInfo& limit) {
-    if (!android::base::WriteStringToFile(std::to_string(limit.max), mChargingLimitNode->max_path,
-                                          true)) {
-        LOG(ERROR) << "Failed to write to charging limit max node: " << strerror(errno);
-        return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+    if (limit.min < 0 || limit.min >= limit.max || limit.max > 100) {
+        LOG(ERROR) << "Invalid charging limit range: min=" << limit.min << ", max=" << limit.max;
+        return ndk::ScopedAStatus::fromExceptionCode(EX_ILLEGAL_ARGUMENT);
     }
 
-    if (!android::base::WriteStringToFile(std::to_string(limit.min), mChargingLimitNode->min_path,
-                                          true)) {
-        LOG(ERROR) << "Failed to write to charging limit min node: " << strerror(errno);
-        return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+    ChargingLimitInfo cur{};
+    ndk::ScopedAStatus status = getChargingLimit(&cur);
+    if (!status.isOk()) {
+        return status;
     }
 
-    return ndk::ScopedAStatus::ok();
+    auto writeMin = [&]() -> ndk::ScopedAStatus {
+        if (limit.min == cur.min) {
+            return ndk::ScopedAStatus::ok();
+        }
+        if (!android::base::WriteStringToFile(std::to_string(limit.min),
+                                              mChargingLimitNode->min_path, true)) {
+            LOG(ERROR) << "Failed to write to charging limit min node: " << strerror(errno);
+            return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+        }
+        return ndk::ScopedAStatus::ok();
+    };
+
+    auto writeMax = [&]() -> ndk::ScopedAStatus {
+        if (limit.max == cur.max) {
+            return ndk::ScopedAStatus::ok();
+        }
+        if (!android::base::WriteStringToFile(std::to_string(limit.max),
+                                              mChargingLimitNode->max_path, true)) {
+            LOG(ERROR) << "Failed to write to charging limit max node: " << strerror(errno);
+            return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+        }
+        return ndk::ScopedAStatus::ok();
+    };
+
+    if (limit.min < cur.min) {
+        status = writeMin();
+        if (!status.isOk()) {
+            return status;
+        }
+        return writeMax();
+    }
+
+    status = writeMax();
+    if (!status.isOk()) {
+        return status;
+    }
+    return writeMin();
 }
 #else
 ndk::ScopedAStatus ChargingControl::getChargingLimit(ChargingLimitInfo* /* _aidl_return */) {
